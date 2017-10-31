@@ -11,4 +11,12 @@ spl_autoload_register(function ($class)
     include $file;
   }
 });
+
+//Include config for MySQL server
+$config = include "config.php";
+
+//Create a connection to the MySQL server
+$db = new mysqli($config['hostname'], $config['username'], $config['password'], $config['database']);
+
+$db->close();
 ?>
