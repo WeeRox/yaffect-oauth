@@ -4,7 +4,7 @@ namespace Response;
 class ErrorResponse
 {
   private $response = array();
-  function __construct(argument)
+  function __construct()
   {
     http_response_code(400);
     header("Cache-Control: no-store");
