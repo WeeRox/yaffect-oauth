@@ -1,5 +1,5 @@
 <?php
-namespace Reponse;
+namespace Response;
 
 class ErrorResponse
 {
