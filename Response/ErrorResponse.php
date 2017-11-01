@@ -36,7 +36,7 @@ class ErrorResponse
   {
     $response['error'] = 'unsupported_grant_type';
     $response['error_description'] = "Grant type '$grantType' is unsupported. Supported grant types are 'password'.";
-    echo $response;
+    echo json_encode($response);
   }
 
   static function invalidScope()
