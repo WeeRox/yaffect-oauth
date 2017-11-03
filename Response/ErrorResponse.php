@@ -15,22 +15,22 @@ class ErrorResponse
 
   public static function invalidRequest()
   {
-
+    self::init();
   }
 
   public static function invalidClient()
   {
-
+    self::init();
   }
 
   public static function invalidGrant()
   {
-
+    self::init();
   }
 
   public static function unauthorizedClient()
   {
-
+    self::init();
   }
 
   public static function unsupportedGrantType($grantType)
@@ -43,7 +43,7 @@ class ErrorResponse
 
   public static function invalidScope()
   {
-
+    self::init();
   }
 }
 
