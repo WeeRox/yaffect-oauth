@@ -20,13 +20,17 @@ $config = include "config.php";
 //Create a connection to the MySQL server
 $db = new mysqli($config['hostname'], $config['username'], $config['password'], $config['database']);
 
-switch ($_POST['grant_type']) {
-  case 'password':
+if (empty($_POST['grant_type'])) {
+  ErrorResponse::invalidRequest();
+} else {
+  switch ($_POST['grant_type']) {
+    case 'password':
     //TODO
     break;
-  default:
+    default:
     ErrorResponse::unsupportedGrantType($_POST['grant_type']);
     break;
+  }
 }
 
 $db->close();
