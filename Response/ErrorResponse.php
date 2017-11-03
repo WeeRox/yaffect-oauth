@@ -4,7 +4,8 @@ namespace Response;
 class ErrorResponse
 {
   private $response = array();
-  function __construct()
+
+  private static function init()
   {
     http_response_code(400);
     header("Cache-Control: no-store");
@@ -12,34 +13,35 @@ class ErrorResponse
     header("Content-Type: application/json");
   }
 
-  static function invalidRequest()
+  public static function invalidRequest()
   {
 
   }
 
-  static function invalidClient()
+  public static function invalidClient()
   {
 
   }
 
-  static function invalidGrant()
+  public static function invalidGrant()
   {
 
   }
 
-  static function unauthorizedClient()
+  public static function unauthorizedClient()
   {
 
   }
 
-  static function unsupportedGrantType($grantType)
+  public static function unsupportedGrantType($grantType)
   {
+    self::init();
     $response['error'] = 'unsupported_grant_type';
     $response['error_description'] = "Grant type '$grantType' is unsupported. Supported grant types are 'password'.";
     echo json_encode($response);
   }
 
-  static function invalidScope()
+  public static function invalidScope()
   {
 
   }
