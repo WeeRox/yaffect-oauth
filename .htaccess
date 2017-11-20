@@ -1,4 +1,6 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteRule ^token$ /token.php [L]
+  RewriteCond %{HTTP:Authorization} ^(.*)
+  RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 </IfModule>
