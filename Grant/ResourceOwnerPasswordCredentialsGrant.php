@@ -36,7 +36,7 @@ class ResourceOwnerPasswordCredentialsGrant
         // TODO: check whether the client were issued a client secret and if so check that it matches the one in the request
       } else {
         // no id were passed in the authorization header
-        ErrorResponse::invalidClien();
+        ErrorResponse::invalidClient();
         return false;
       }
     } else {
@@ -48,7 +48,7 @@ class ResourceOwnerPasswordCredentialsGrant
 
   private static function validateUser()
   {
-    
+
   }
 }
 ?>

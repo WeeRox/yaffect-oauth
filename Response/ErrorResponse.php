@@ -23,7 +23,7 @@ class ErrorResponse
   public static function invalidClient()
   {
     self::init();
-    htto_response_code(401);
+    http_response_code(401);
     $response['error'] = 'invalid_client';
 
     // TODO: WWW-Authenticate header
