@@ -26,7 +26,7 @@ class ErrorResponse
     http_response_code(401);
     $response['error'] = 'invalid_client';
 
-    // TODO: WWW-Authenticate header
+    header("WWW-Authenticate: Basic");
 
     echo json_encode($response);
   }
