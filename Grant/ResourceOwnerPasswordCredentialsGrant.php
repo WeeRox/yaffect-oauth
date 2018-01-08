@@ -40,7 +40,6 @@ class ResourceOwnerPasswordCredentialsGrant
 
   private static function validateClient()
   {
-    echo "validateClient<br />";
 
     // check for unsupported auth methods
     if (!empty($_SERVER['HTTP_AUTHORIZATION']) && (explode(" ", $_SERVER['HTTP_AUTHORIZATION'])[0] != 'Basic')) {
@@ -79,13 +78,20 @@ class ResourceOwnerPasswordCredentialsGrant
 
       $row = $result->fetch_assoc();
 
+      // make sure that the client is authorized to use this grant type
       if ($row['grant_type'] != "password") {
         ErrorResponse::unauthorizedClient();
         return false;
       }
 
-      // TODO: check if client secret has been issued
-      // TODO: if so, check that the client secret is correct
+      // check if client secret has been issued to the client
+      if (!is_null($row['client_secret'])) {
+        // check that the client secrets matches
+        if ($clientSecret !== $row['client_secret']) {
+          ErrorResponse::invalidClient();
+          return false;
+        }
+      }
 
       $result->close();
       return true;
