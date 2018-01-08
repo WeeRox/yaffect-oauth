@@ -2,6 +2,7 @@
 namespace Grant;
 
 use Response\ErrorResponse;
+use Database\Database;
 
 class ResourceOwnerPasswordCredentialsGrant
 {
@@ -50,9 +51,15 @@ class ResourceOwnerPasswordCredentialsGrant
     // check if client want to authenticate using header or body
     if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
       $clientId = $_SERVER['PHP_AUTH_USER'];
-      $clientSecret = $_SERVER['PHP_AUTH_PW'];
+
+      if (empty($_SERVER['PHP_AUTH_PW'])) {
+        $clientSecret = NULL;
+      } else {
+        $clientSecret = $_SERVER['PHP_AUTH_PW'];
+      }
     } else if (!empty($_POST['client_id'])) {
       $clientId = $_POST['client_id'];
+
       if (empty($_POST['client_secret'])) {
         $clientSecret = NULL;
       } else {
@@ -60,12 +67,29 @@ class ResourceOwnerPasswordCredentialsGrant
       }
     }
 
-    echo "clientId: " . $clientId . "<br />";
-    echo "clientSecret: '" . $clientSecret . "'<br />";
+    $database = new Database();
 
-    // TODO: get client info from database
-    // TODO: if client id weren't found, return error invalid_client
-    // TODO: check whether the client were issued a client secret and if so check that it matches the one in the request
+    if ($result = $database->query("SELECT * FROM clients WHERE client_id = '$clientId';")) {
+
+      // check if client id exist in database
+      if ($result->num_rows != 1) {
+        ErrorResponse::invalidClient();
+        return false;
+      }
+
+      $row = $result->fetch_assoc();
+
+      if ($row['grant_type'] != "password") {
+        ErrorResponse::unauthorizedClient();
+        return false;
+      }
+
+      // TODO: check if client secret has been issued
+      // TODO: if so, check that the client secret is correct
+
+      $result->close();
+      return true;
+    }
   }
 
   private static function validateUser()
