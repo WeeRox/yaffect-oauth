@@ -40,7 +40,6 @@ class ResourceOwnerPasswordCredentialsGrant
 
   private static function validateClient()
   {
-
     // check for unsupported auth methods
     if (!empty($_SERVER['HTTP_AUTHORIZATION']) && (explode(" ", $_SERVER['HTTP_AUTHORIZATION'])[0] != 'Basic')) {
       ErrorResponse::invalidClient();
@@ -68,8 +67,7 @@ class ResourceOwnerPasswordCredentialsGrant
 
     $database = new Database();
 
-    if ($result = $database->query("SELECT * FROM clients WHERE client_id = '$clientId';")) {
-
+    if ($result = $database->query("SELECT * FROM clients WHERE client_id = UNHEX('" . $database->base64url2hex($clientId) . "');")) {
       // check if client id exist in database
       if ($result->num_rows != 1) {
         ErrorResponse::invalidClient();
@@ -87,20 +85,24 @@ class ResourceOwnerPasswordCredentialsGrant
       // check if client secret has been issued to the client
       if (!is_null($row['client_secret'])) {
         // check that the client secrets matches
-        if ($clientSecret !== $row['client_secret']) {
+        if ($clientSecret !== $database->hex2base64url(bin2hex($row['client_secret']))) {
           ErrorResponse::invalidClient();
           return false;
         }
       }
 
       $result->close();
-      return true;
+    } else {
+      // TODO: database error
+      return false;
     }
+
+    return true;
   }
 
   private static function validateUser()
   {
-
+    echo password_hash('test123', PASSWORD_ARGON2I);
   }
 }
 ?>
