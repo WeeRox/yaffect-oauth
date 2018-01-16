@@ -7,10 +7,11 @@ use Database\Database;
 class ResourceOwnerPasswordCredentialsGrant
 {
 
-  public $client;
+  private $database;
 
   public static function respond()
   {
+    $this->database = new Database();
     if (self::validateRequest() && self::validateClient() && self::validateUser()) {
       //TODO: return access token (bearer response)
     }
@@ -65,9 +66,7 @@ class ResourceOwnerPasswordCredentialsGrant
       }
     }
 
-    $database = new Database();
-
-    if ($result = $database->query("SELECT * FROM clients WHERE client_id = UNHEX('" . $database->base64url2hex($clientId) . "');")) {
+    if ($result = $this->database->query("SELECT * FROM clients WHERE client_id = UNHEX('" . $this->database->base64url2hex($clientId) . "');")) {
       // check if client id exist in database
       if ($result->num_rows != 1) {
         ErrorResponse::invalidClient();
@@ -85,7 +84,7 @@ class ResourceOwnerPasswordCredentialsGrant
       // check if client secret has been issued to the client
       if (!is_null($row['client_secret'])) {
         // check that the client secrets matches
-        if ($clientSecret !== $database->hex2base64url(bin2hex($row['client_secret']))) {
+        if ($clientSecret !== $this->database->hex2base64url(bin2hex($row['client_secret']))) {
           ErrorResponse::invalidClient();
           return false;
         }
@@ -102,7 +101,30 @@ class ResourceOwnerPasswordCredentialsGrant
 
   private static function validateUser()
   {
-    echo password_hash('test123', PASSWORD_ARGON2I);
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    if ($result = $this->database->query("SELECT * FROM users WHERE username = '$username'")) {
+      // check if username exist in database
+      if ($result->num_rows != 1) {
+        ErrorResponse::invalidClient();
+        return false;
+      }
+
+      $row = $result->fetch_assoc();
+
+      if (!password_verify($password, $row['password'])) {
+        ErrorResponse::unauthenticatedUser();
+        return false;
+      }
+
+      $result->close();
+    } else {
+      // TODO: database error
+      return false;
+    }
+
+    return true;
   }
 }
 ?>

@@ -59,6 +59,21 @@ class ErrorResponse
     $response['error'] = 'invalid_scope';
     echo json_encode($response);
   }
+
+  /* Below are custom error reponses */
+
+  // The user didn't provide a correct pair of username and password
+  public static function unauthenticatedUser()
+  {
+    self::init();
+    http_response_code(401); // 401 Unauthorized
+    $response['error'] = 'unauthenticated_user';
+    $response['error_description'] = "Username and/or password are incorrect. Try again with a different pair of username and password.";
+
+    header("WWW-Authenticate: Newauth");
+
+    echo json_encode($response);
+  }
 }
 
 ?>
