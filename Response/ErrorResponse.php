@@ -10,7 +10,7 @@ class ErrorResponse
     http_response_code(400);
     header("Cache-Control: no-store");
     header("Pragma: no-cache");
-    header("Content-Type: application/json");
+    header("Content-Type: application/json; charset=UTF-8");
   }
 
   public static function invalidRequest()
