@@ -2,18 +2,21 @@
 namespace Grant;
 
 use Response\ErrorResponse;
+use Response\BearerResponse;
 use Database\Database;
 
 class ResourceOwnerPasswordCredentialsGrant
 {
 
-  private $database;
+  private static $database;
 
   public static function respond()
   {
-    $this->database = new Database();
-    if (self::validateRequest() && self::validateClient() && self::validateUser()) {
-      //TODO: return access token (bearer response)
+    self::$database = new Database();
+
+    // do a 'hard' check since scope can be empty
+    if (($scope = self::validateRequest()) !== false && ($clientId = self::validateClient()) && ($userId = self::validateUser())) {
+      BearerResponse::respond($clientId, $userId, $scope);
     }
   }
 
@@ -36,7 +39,12 @@ class ResourceOwnerPasswordCredentialsGrant
       ErrorResponse::invalidRequest();
       return false;
     }
-    return true;
+
+    if (isset($_POST['scope'])) {
+      return $_POST['scope'];
+    } else {
+      return '';
+    }
   }
 
   private static function validateClient()
@@ -66,7 +74,7 @@ class ResourceOwnerPasswordCredentialsGrant
       }
     }
 
-    if ($result = $this->database->query("SELECT * FROM clients WHERE client_id = UNHEX('" . $this->database->base64url2hex($clientId) . "');")) {
+    if ($result = self::$database->query("SELECT * FROM clients WHERE client_id = UNHEX('" . self::$database->base64url2hex($clientId) . "');")) {
       // check if client id exist in database
       if ($result->num_rows != 1) {
         ErrorResponse::invalidClient();
@@ -84,7 +92,7 @@ class ResourceOwnerPasswordCredentialsGrant
       // check if client secret has been issued to the client
       if (!is_null($row['client_secret'])) {
         // check that the client secrets matches
-        if ($clientSecret !== $this->database->hex2base64url(bin2hex($row['client_secret']))) {
+        if ($clientSecret !== self::$database->hex2base64url(bin2hex($row['client_secret']))) {
           ErrorResponse::invalidClient();
           return false;
         }
@@ -96,7 +104,7 @@ class ResourceOwnerPasswordCredentialsGrant
       return false;
     }
 
-    return true;
+    return $clientId;
   }
 
   private static function validateUser()
@@ -104,10 +112,12 @@ class ResourceOwnerPasswordCredentialsGrant
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    if ($result = $this->database->query("SELECT * FROM users WHERE username = '$username'")) {
+    if ($result = self::$database->query("SELECT * FROM users WHERE username = '$username'")) {
+
+      /* TODO: uncomment this when PHP has Argon2i in its binaries
       // check if username exist in database
       if ($result->num_rows != 1) {
-        ErrorResponse::invalidClient();
+        ErrorResponse::unauthenticatedUser();
         return false;
       }
 
@@ -118,13 +128,18 @@ class ResourceOwnerPasswordCredentialsGrant
         return false;
       }
 
+      $userId = slef::$database->hex2base64url(bin2hex($row['user_id']));
+      */
+
       $result->close();
     } else {
       // TODO: database error
       return false;
     }
 
-    return true;
+    // TODO: uncomment this when PHP has Argon2i in its binaries
+    // return $userId;
+    return 'test_uid';
   }
 }
 ?>
