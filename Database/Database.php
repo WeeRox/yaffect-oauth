@@ -50,7 +50,7 @@ class Database
       // 48 bits for "node"
       mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
     );
-    return $this->uuid2hex($uuid);
+    return $uuid;
   }
 
   function uuid2hex($uuid) {
