@@ -114,7 +114,6 @@ class ResourceOwnerPasswordCredentialsGrant
 
     if ($result = self::$database->query("SELECT * FROM users WHERE username = '$username'")) {
 
-      /* TODO: uncomment this when PHP has Argon2i in its binaries
       // check if username exist in database
       if ($result->num_rows != 1) {
         ErrorResponse::unauthenticatedUser();
@@ -129,7 +128,6 @@ class ResourceOwnerPasswordCredentialsGrant
       }
 
       $userId = slef::$database->hex2base64url(bin2hex($row['user_id']));
-      */
 
       $result->close();
     } else {
@@ -137,9 +135,7 @@ class ResourceOwnerPasswordCredentialsGrant
       return false;
     }
 
-    // TODO: uncomment this when PHP has Argon2i in its binaries
-    // return $userId;
-    return 'test_uid';
+    return $userId;
   }
 }
 ?>
