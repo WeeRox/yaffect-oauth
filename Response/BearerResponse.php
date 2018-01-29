@@ -17,7 +17,7 @@ class BearerResponse
 
   public static function respond($clientId, $userId, $expiresIn=3600, $scope='', $refreshToken=True)
   {
-    init();
+    self::init();
 
     $accessToken = AccessToken::generateAccessToken($clientId, $userId, $expiresIn, $scope);
 

@@ -127,7 +127,7 @@ class ResourceOwnerPasswordCredentialsGrant
         return false;
       }
 
-      $userId = slef::$database->hex2base64url(bin2hex($row['user_id']));
+      $userId = self::$database->hex2base64url(bin2hex($row['user_id']));
 
       $result->close();
     } else {

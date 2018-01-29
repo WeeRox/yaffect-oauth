@@ -15,7 +15,7 @@ class AccessToken
     $userId_hex = $database->base64url2hex($userId);
 
     // TODO: fix expires_in to be utc + seconds
-    if ($database->query("INSERT INTO access_tokens (access_token, client_id, user_id, expires, scope) VALUES (UNHEX('$accessToken_hex'), UNHEX('$clientId_hex'), UNHEX('$userId_hex'), $expires, $scope);")) {
+    if ($database->query("INSERT INTO access_tokens (access_token, client_id, user_id, expires, scope) VALUES (UNHEX('$accessToken_hex'), UNHEX('$clientId_hex'), UNHEX('$userId_hex'), $expiresIn, $scope);")) {
       return $accessToken_base64url;
     } else {
       // TODO: database error
