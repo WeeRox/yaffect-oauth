@@ -17,7 +17,8 @@ class BearerResponse
 
   public static function respond($clientId, $userId, $expiresIn=3600, $scope='', $refreshToken=True)
   {
-    // TODO: convert expires to UTC datetime
+    init();
+
     $accessToken = AccessToken::generateAccessToken($clientId, $userId, $expiresIn, $scope);
 
     if ($accessToken === false) {
@@ -25,8 +26,6 @@ class BearerResponse
       return false;
     }
 
-    echo "acctok: ";
-    var_dump($accessToken);
     $response['access_token'] = $accessToken;
     $response['token_type'] = "Bearer";
     $response['expires_in'] = $expiresIn;
