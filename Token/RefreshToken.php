@@ -14,7 +14,7 @@ class RefreshToken
     $clientId_hex = $database->base64url2hex($clientId);
     $userId_hex = $database->base64url2hex($userId);
 
-    if ($database->query("INSERT INTO refresh_tokens (refresh_token, client_id, user_id, scope) VALUES (UNHEX('$refreshToken_hex'), UNHEX('$clientId_hex'), UNHEX('$userId_hex'), $scope);")) {
+    if ($database->query("INSERT INTO refresh_tokens (refresh_token, client_id, user_id, scope) VALUES (UNHEX('$refreshToken_hex'), UNHEX('$clientId_hex'), UNHEX('$userId_hex'), '$scope');")) {
       return $refreshToken_base64url;
     } else {
       // TODO: database error

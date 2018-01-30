@@ -2,6 +2,7 @@
 namespace Response;
 
 use Token\AccessToken;
+use Token\RefreshToken;
 
 class BearerResponse
 {
@@ -15,7 +16,7 @@ class BearerResponse
     header("Content-Type: application/json; charset=UTF-8");
   }
 
-  public static function respond($clientId, $userId, $expiresIn=3600, $scope='', $refreshToken=True)
+  public static function respond($clientId, $userId, $scope='', $expiresIn=3600, $refreshToken=true)
   {
     self::init();
 

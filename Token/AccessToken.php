@@ -14,7 +14,7 @@ class AccessToken
     $clientId_hex = $database->base64url2hex($clientId);
     $userId_hex = $database->base64url2hex($userId);
 
-    if ($database->query("INSERT INTO access_tokens (access_token, client_id, user_id, expires, scope) VALUES (UNHEX('$accessToken_hex'), UNHEX('$clientId_hex'), UNHEX('$userId_hex'), DATE_ADD(UTC_TIMESTAMP(), INTERVAL $expiresIn SECOND), $scope);")) {
+    if ($database->query("INSERT INTO access_tokens (access_token, client_id, user_id, expires, scope) VALUES (UNHEX('$accessToken_hex'), UNHEX('$clientId_hex'), UNHEX('$userId_hex'), DATE_ADD(UTC_TIMESTAMP(), INTERVAL $expiresIn SECOND), '$scope');")) {
       return $accessToken_base64url;
     } else {
       // TODO: database error
