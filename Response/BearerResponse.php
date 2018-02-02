@@ -22,21 +22,19 @@ class BearerResponse
 
     $accessToken = AccessToken::generateAccessToken($clientId, $userId, $expiresIn, $scope);
 
-    if ($accessToken === false) {
-      // TODO: return error
-      return false;
+    // if access token is false, something went wrong
+    if ($accessToken !== false) {
+      $response['access_token'] = $accessToken;
+      $response['token_type'] = "Bearer";
+      $response['expires_in'] = $expiresIn;
+
+      if ($refreshToken) {
+        $refreshToken = RefreshToken::generateRefreshToken($clientId, $userId, $scope);
+        $response['refresh_token'] = $refreshToken;
+      }
+
+      echo json_encode($response);
     }
-
-    $response['access_token'] = $accessToken;
-    $response['token_type'] = "Bearer";
-    $response['expires_in'] = $expiresIn;
-
-    if ($refreshToken) {
-      $refreshToken = RefreshToken::generateRefreshToken($clientId, $userId, $scope);
-      $response['refresh_token'] = $refreshToken;
-    }
-
-    echo json_encode($response);
   }
 }
 ?>
