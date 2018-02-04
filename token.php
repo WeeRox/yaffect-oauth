@@ -4,6 +4,7 @@ ini_set('display_errors', 'On');
 
 use Response\ErrorResponse;
 use Grant\ResourceOwnerPasswordCredentialsGrant;
+use Grant\RefreshTokenGrant;
 use Database\Database;
 
 // Register an autoloader for classes.
@@ -22,6 +23,9 @@ if (empty($_POST['grant_type'])) {
   switch ($_POST['grant_type']) {
     case 'password':
       ResourceOwnerPasswordCredentialsGrant::respond();
+      break;
+    case 'refresh_token':
+      RefreshTokenGrant::respond();
       break;
     default:
       ErrorResponse::unsupportedGrantType($_POST['grant_type']);
