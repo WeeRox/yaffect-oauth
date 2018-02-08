@@ -1,6 +1,10 @@
 <?php
 namespace Grant;
 
+use Response\ErrorResponse;
+use Response\BearerResponse;
+use Database\Database;
+
 class RefreshTokenGrant
 {
 
@@ -11,8 +15,8 @@ class RefreshTokenGrant
     self::$database = new Database();
 
     // do a 'hard' check since scope can be empty
-    if (($scope = self::validateRequest()) !== false && ($clientId = self::validateClient()) && ($refreshToken = self::validateRefreshToken())) {
-      BearerResponse::respond($clientId, $userId, $scope);
+    if (($scope = self::validateRequest()) !== false && ($clientId = self::validateClient()) && ($refreshToken = self::validateRefreshToken($clientId)) && ($userId = self::getUserIdFromRefreshToken($refreshToken))) {
+      BearerResponse::respond($clientId, $userId, $scope, $refreshToken);
     }
   }
 
@@ -97,10 +101,43 @@ class RefreshTokenGrant
     return $clientId;
   }
 
-  private static function validateRefreshToken()
+  private static function validateRefreshToken($clientId)
   {
     $refreshToken = $_POST['refresh_token'];
-    // TODO: check that refresh_token is valid
+
+    if ($result = self::$database->query("SELECT * FROM refresh_tokens WHERE refresh_token = UNHEX('" . self::$database->base64url2hex($refreshToken) . "');")) {
+      if ($result->num_rows != 1) {
+        ErrorResponse::invalidGrant();
+        return false;
+      }
+
+      $row = $result->fetch_assoc();
+
+      // the refresh token weren't issued to this client
+      if (self::$database->hex2base64url(bin2hex($row['client_id'])) !== $clientId) {
+        ErrorResponse::invalidGrant();
+        return false;
+      }
+
+      $result->close();
+    } else {
+      // TODO: database error
+      return false;
+    }
+
+    return $refreshToken;
+  }
+
+  private static function getUserIdFromRefreshToken($refreshToken)
+  {
+    if ($result = self::$database->query("SELECT user_id FROM refresh_tokens WHERE refresh_token = UNHEX('" . self::$database->base64url2hex($refreshToken) . "');")) {
+      $row = $result->fetch_assoc();
+
+      return self::$database->hex2base64url(bin2hex($row['user_id']));
+    } else {
+      // TODO: database error
+      return false;
+    }
   }
 }
 ?>
