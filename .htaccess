@@ -7,4 +7,8 @@ DirectorySlash Off
   RewriteRule token/?$ /token.php [L,QSA]
   RewriteCond %{HTTP:Authorization} ^(.*)
   RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+
+  RewriteRule introspect/?$ /introspect.php [L,QSA]
+  RewriteCond %{HTTP:Authorization} ^(.*)
+  RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 </IfModule>

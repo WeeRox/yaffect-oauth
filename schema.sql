@@ -37,7 +37,7 @@ CREATE TABLE `clients` (
   `client_id` binary(16) NOT NULL,
   `client_secret` binary(16) DEFAULT NULL,
   `client_type` enum('confidential','public') NOT NULL,
-  `grant_type` set('password') NOT NULL,
+  `grant_type` set('password', 'introspect') NOT NULL,
   PRIMARY KEY (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
