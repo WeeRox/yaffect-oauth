@@ -2,13 +2,9 @@ Options -Indexes
 # DirectorySlash has to be off to prevent a redirect, which will delete all POST variables...
 DirectorySlash Off
 
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteRule token/?$ /token.php [L,QSA]
-  RewriteCond %{HTTP:Authorization} ^(.*)
-  RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+RewriteEngine On
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 
-  RewriteRule introspect/?$ /introspect.php [L,QSA]
-  RewriteCond %{HTTP:Authorization} ^(.*)
-  RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
-</IfModule>
+RewriteRule token/?$ /token.php [L,QSA,NC]
+RewriteRule introspect/?$ /introspect.php [L,QSA,NC]
