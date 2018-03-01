@@ -1,11 +1,13 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+$config = include 'config.php';
 
-use Response\ErrorResponse;
-use Grant\ResourceOwnerPasswordCredentialsGrant;
-use Grant\RefreshTokenGrant;
-use Database\Database;
+if ($config['debug']) {
+	error_reporting(E_ALL);
+	ini_set('display_errors', 'On');
+} else {
+	error_reporting(0);
+	ini_set('display_errors', 'Off');
+}
 
 // Register an autoloader for classes.
 // The namespace will correspond to folder structure
@@ -16,6 +18,11 @@ spl_autoload_register(function ($class)
     include $file;
   }
 });
+
+use Response\ErrorResponse;
+use Grant\ResourceOwnerPasswordCredentialsGrant;
+use Grant\RefreshTokenGrant;
+use Database\Database;
 
 if (empty($_POST['grant_type'])) {
   ErrorResponse::invalidRequest();
